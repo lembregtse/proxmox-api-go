@@ -32,6 +32,7 @@ type ConfigQemu struct {
 	Description     string      `json:"desc"`
 	Pool            string      `json:"pool,omitempty"`
 	Bios            string      `json:"bios"`
+	Smbios1         string      `json:"smbios1,omitempty"`
 	EFIDisk         string      `json:"efidisk,omitempty"`
 	Machine         string      `json:"machine,omitempty"`
 	Onboot          bool        `json:"onboot"`
@@ -137,6 +138,10 @@ func (config ConfigQemu) CreateVm(vmr *VmRef, client *Client) (err error) {
 
 	if config.Bios != "" {
 		params["bios"] = config.Bios
+	}
+
+	if config.Smbios1 != "" {
+		params["smbios1"] = config.Smbios1
 	}
 
 	if config.Balloon >= 1 {
@@ -305,6 +310,10 @@ func (config ConfigQemu) UpdateConfig(vmr *VmRef, client *Client) (err error) {
 
 	if config.Bios != "" {
 		configParams["bios"] = config.Bios
+	}
+
+	if config.Smbios1 != "" {
+		configParams["smbios1"] = config.Smbios1
 	}
 
 	if config.Balloon >= 1 {
@@ -541,6 +550,10 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 	if _, isSet := vmConfig["bios"]; isSet {
 		bios = vmConfig["bios"].(string)
 	}
+	smbios1 := ""
+	if _, isSet := vmConfig["smbios1"]; isSet {
+		smbios1 = vmConfig["smbios1"].(string)
+	}
 	efidisk := ""
 	if _, isSet := vmConfig["efidisk0"]; isSet {
 		efidisk = vmConfig["efidisk0"].(string)
@@ -629,6 +642,7 @@ func NewConfigQemuFromApi(vmr *VmRef, client *Client) (config *ConfigQemu, err e
 		Tags:            strings.TrimSpace(tags),
 		Args:            strings.TrimSpace(args),
 		Bios:            bios,
+		Smbios1:         smbios1,
 		EFIDisk:         efidisk,
 		Onboot:          onboot,
 		Tablet:          tablet,
